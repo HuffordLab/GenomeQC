@@ -1,0 +1,401 @@
+#loading all the R packages
+library(shiny)
+options(shiny.maxRequestSize = 1000*1024^2) #This command limits the size for file uploads to 1Gb. If unset, the maximum request size defaults to 5MB.
+options(shiny.fullstacktrace = TRUE) #Controls whether full stack traces are dumped to the console when errors occur during Shiny app execution. The default is FALSE (pretty stack traces).
+  library(tools)
+  library(seqinr)
+  library(stringr)
+  library(tidyverse)
+  require(Biostrings)
+  library(gridExtra)
+  library(shinyBS)
+  library(DT)
+  library(cowplot)
+  library(grid)
+  library(shinyWidgets)
+  library(reshape)
+  library(R.utils)
+  library(promises)
+  library(future)
+  plan(multisession) 
+  
+
+ui <- navbarPage("Genome Assembly and Annotation Metrics",
+                   
+      tabPanel("FAQs", helpText(HTML(
+                   '<style>
+                             .greenText
+                             {
+                             color:green;
+                             font-weight:bold;
+                             }
+                             .blackText
+                             {
+                             color:black;
+                            
+                             }
+                              .blueText
+                             {
+                             color:blue;
+                             
+                             }
+                             </style>
+                              <p class="blueText">Frequently Asked Questions (FAQs): </p>
+
+                               <p class="greenText">Q: What should I do if the web-page gets disconnected? </p
+                               class="blackText">A: Shiny server is sensitive to internet connectivity and so, you might experience disconnection of the page due to intermittent internet connection. Do not worry if this happens, you could just reload the page and submit your job.
+if you are waiting for your Busco results and the web-page gets disconnected, don’t worry as these plots will be emailed to the email address you provided in the input box.</p>
+                               <p class="greenText">Q: How long does it take for the busco analysis to be finished? </p
+                               class="blackText">A: Busco analysis of genome assemblies and annotations is a computationally intensive job and the expected run time depends on the size of assemblies and annotation set. The following lists the expected run time for different genomes: 
+Genomes up to 200 Mb: up to 2 hours,
+Genomes between 200Mb  and 400 Mb: 3-4 hours,
+Genomes between 400Mb and 700 Mb: 4-8 hours,
+Genomes between 700Mb and 1.5 Gb: 8-24 hours,
+Genomes greater than 1.5 Gb: >1 day</p>
+                               <p class="greenText">Q: What should I do if I didn’t get the busco plots via email? </p
+                               class="blackText">A: Please check your spam folder if you don’t find the plots in your inbox. If you still don’t find it in your spam folder, please contact us with the details of your job submission including your job ID.</p>
+                     
+                               <p class="blueText">Contact us at: mgdb@iastate.edu</p>
+                       
+                                
+                               '))
+                 ),
+                 
+  tabPanel("Compare reference genomes",               
+    sidebarLayout(
+      sidebarPanel(
+        HTML(
+          "Please click the blue icon on the right of each input field to get more info about the input field.", 
+          "Click again on the icon after reading the info to close the pop-up box", sep = "<br/>"),
+        
+        tags$style(".popover{
+                   max-width: 100%;}"),
+        div(
+          div(style="width:90%; display:inline-block; vertical-align: middle;", pickerInput(
+            inputId = "references", 
+            label = HTML('<p> Reference Genomes<span style="color: red; font-size:150%;">*</span></p>'),
+            choices = c("B73_v4", "W22_v2", "Mo17"),          
+            #choices = c("Maize_B73_v4", "Maize_W22_v2", "Maize_Mo17", "Sorghum_bicolor_NCBIv3", "Oryza_sativa_japonica_Build_4.0", "Arabidopsis_TAIR10.1"),
+            options = list(
+              `actions-box` = TRUE, 
+              size = 10,
+              `selected-text-format` = "count > 3"
+            ), 
+            multiple = TRUE
+          )),
+          div(style="display:inline-block;vertical-align:top;", bsButton("q1", label = "", icon = icon("info"), style = "info", size = "extra-small"))
+        ),
+        bsPopover(id = "q1", title = "",
+                  
+                  content = paste("When the values in this field are selected, the app will",
+                                  "provide you comparison of pre-computed reference/database values.", sep = "<br>"),
+                  placement = "right",
+                  trigger = "click",  options=list(container="body")),
+        div(
+          div(style="width:90%; display:inline-block; vertical-align: middle;",  textInput("id", label = HTML('<p> Enter your email address<span style="color: red; font-size:150%;">*</span></p>'), value = "")),
+          div(style="display:inline-block;vertical-align:top;", bsButton("q2", label = "", icon = icon("info"), style = "info", size = "extra-small"))
+        ),
+        bsPopover(id = "q2", title = "",
+                  content = paste("Busco analysis results", 
+                                  "will be emailed to this address", sep = "<br>"),
+                  placement = "right",
+                  trigger = "click",  options=list(container="body")),
+        
+        actionButton("go", "Click To Submit Your Job", style = "color: blue; font-size:150%; font-weight: bold; height: 50px;
+                    width: 300px"),
+        
+        helpText(HTML('<p style="color:black; font-size: 20px">Download your results</p>')),
+        downloadButton('assemblyplot', 'Download NG(X)plot'),
+        downloadButton('downloadassemblytable', 'Download asssembly metrics table'),
+        downloadButton('downloadannotationtable', 'Download annotation metrics table')
+      ),
+      mainPanel(
+        fluidRow(
+          helpText(HTML('<p style="color:red; fontsize: 9pt">Please click on each tab from left to right one at a time, explore the tab completely, download its results and then move on to next tab. Click the busco tab at the very end only.</p>')),
+          helpText(HTML('<p style="color:green; fontsize: 9pt; font-weight: bold">Pop-up plots on clicking rows of Assembly and Annotation metrics tables!!!!</p>')),
+          tabsetPanel(
+            tabPanel("Assembly NG(x) Plot", helpText("NG(X) plots provide information on the contiguity of the assembled genome sequence. Higher the curve, better is the quality of the assembly in terms of contiguity."),  plotOutput("NGX_plot")),
+            tabPanel("Assembly Metrics Table", helpText("This tab outputs different metrics like number of scaffolds, L50, N50, LG50, NG50, gaps percentage values. A good quality assembly will have less number of total scaffolds, higher N50,NG50 values and lower L50, LG50, %N values."), DT::dataTableOutput("lengthmetrics")),
+            tabPanel("Annotation Metrics Table", DT::dataTableOutput("annotationmetrics")),
+            tabPanel("Assembly and Annotation Busco Plots", helpText("This tab outputs the % of busco genes. A good quality assembly and annotation should have higher number of complete and single copy buscos and lower number of fragmented and missing busco genes. Please be patient. All the plots will be emailed once the analysis is finished."), htmlOutput("reference_busco_plots"))
+            
+          )
+        )
+      )
+    )
+  ),
+        
+    tabPanel("Analyse your genome assembly", fluid = TRUE,
+             
+             sidebarLayout(
+               sidebarPanel(
+                 HTML(
+                   "Please click the blue icon on the right of each input field to get more info about the input field.", 
+                   "Click again on the icon after reading the info to close the pop-up box", sep = "<br/>"),
+                 
+                 tags$style(".popover{
+                   max-width: 100%;}"),
+        
+                 div(
+                   div(style="width:90%; display:inline-block; vertical-align: middle;", pickerInput(
+                     inputId = "references1", 
+                     label = HTML('<p> Reference Genomes</p>'),
+                     choices = c("B73_v4", "W22_v2", "Mo17"),
+                     #choices = c("Maize_B73_v4", "Maize_W22_v2", "Maize_Mo17", "Sorghum_bicolor_NCBIv3", "Oryza_sativa_japonica_Build_4.0", "Arabidopsis_TAIR10.1"),          
+                     options = list(
+                       `actions-box` = TRUE, 
+                       size = 10,
+                       `selected-text-format` = "count > 3"
+                     ), 
+                     multiple = TRUE
+                   )),
+                   div(style="display:inline-block;vertical-align:top;", bsButton("q3", label = "", icon = icon("info"), style = "info", size = "extra-small"))
+                 ),
+                 bsPopover(id = "q3", title = "",
+                           
+                           content = paste("When the values in this field are selected, the app will",
+                                           "provide you comparison of pre-computed reference/database values and also",
+                                           "allows you to compare your genome results with these values", sep = "<br>"),
+                           placement = "right",
+                           trigger = "click",  options=list(container="body")),
+                 div(
+                   div(style="width:90%; display:inline-block; vertical-align: middle;",  textInput("id1", label = HTML('<p> Enter your email address<span style="color: red; font-size:150%;">*</span></p>'), value = "")),
+                   div(style="display:inline-block;vertical-align:top;", bsButton("q4", label = "", icon = icon("info"), style = "info", size = "extra-small"))
+                 ),
+                 bsPopover(id = "q4", title = "",
+                           content = paste("Busco and contamination analysis results", 
+                                           "will be emailed to this address", sep = "<br>"),
+                           placement = "right",
+                           trigger = "click",  options=list(container="body")),
+                 
+        helpText(HTML('<p style="color:red; fontsize: 9pt">Provide just one word for the name</p>')),
+        div(
+          div(style="display:inline-block;vertical-align:top;",  textInput("user_input1", label = HTML('<p> Name of your genome assembly<span style="color: red; font-size:150%;">*</span></p>'), value = "")),
+          div(style="display:inline-block;vertical-align:top;", bsButton("q5", label = "", icon = icon("info"), style = "info", size = "extra-small"))
+         ),
+        bsPopover(id = "q5", title = "",
+                  content = paste("Provide just one word.", 
+                                  "The value in this input field will be used to label",
+                                  "the resulting plots and table.",
+                                  "", sep = "<br>"),
+                  placement = "right",
+                  trigger = "click",  options=list(container="body")),
+
+        
+        div(
+          div(style="display:inline-block;vertical-align:top;", numericInput("estimated_genome_size", label = HTML('<p> Estimated genome size (Mb)<span style="color: red; font-size:150%;">*</span></p>'), value = "")),
+          div(style="display:inline-block;vertical-align:top;", bsButton("q6", label = "", icon = icon("info"), style = "info", size = "extra-small"))
+        ),
+        bsPopover(id = "q6", title = "",
+                  content = paste("You need to provide an estimate of how big is the genome. Please provide the size in megabases (Mb).",
+                                  "Example: estimated genome size for maize is 2200 Mb. The value in this input field will be used to",
+                                  "calculate NG values at different thresholds. Information on NG values can be found here:",
+                                  "https://en.wikipedia.org/wiki/N50,_L50,_and_related_statistics", sep = "<br>"),
+                  placement = "right",
+                  trigger = "click",  options=list(container="body")),
+        
+        div(
+          div(style="width:90%; display:inline-block; vertical-align: middle;", selectInput("busco_sets1", label = HTML('<p> Busco Datasets (select one)<span style="color: red; font-size:150%;">*</span></p>'), c("embryophyta_odb9 (Plants)","bacteria_odb9 (Bacteria)","proteobacteria_odb9 (Bacteria)","rhizobiales_odb9 (Bacteria)","betaproteobacteria_odb9 (Bacteria)","gammaproteobacteria_odb9 (Bacteria)","enterobacteriales_odb9 (Bacteria)","deltaepsilonsub_odb9 (Bacteria)","actinobacteria_odb9 (Bacteria)","cyanobacteria_odb9 (Bacteria)","firmicutes_odb9 (Bacteria)","clostridia_odb9 (Bacteria)","lactobacillales_odb9 (Bacteria)","bacillales_odb9 (Bacteria)","bacteroidetes_odb9 (Bacteria)","spirochaetes_odb9 (Bacteria)","tenericutes_odb9 (Bacteria)", "eukaryota_odb9 (Eukaryota)","fungi_odb9 (Fungi)","microsporidia_odb9 (Fungi)","dikarya_odb9 (Fungi)","ascomycota_odb9 (Fungi)","pezizomycotina_odb9 (Fungi)","eurotiomycetes_odb9 (Fungi)","sordariomyceta_odb9 (Fungi)","saccharomyceta_odb9 (Fungi)","saccharomycetales_odb9 (Fungi)","basidiomycota_odb9 (Fungi)","metazoa_odb9 (Metazoa)","nematoda_odb9 (Roundworms)","arthropoda_odb9 (Insects)","insecta_odb9 (Insects)","endopterygota_odb9 (Insects)","hymenoptera_odb9 (Insects)","diptera_odb9 (Insects)","vertebrata_odb9 (Vertebrates)","actinopterygii_odb9 (Ray-finned fishes)","tetrapoda_odb9 (Tetrapods)","aves_odb9 (Birds)","mammalia_odb9 (Mammals)","euarchontoglires_odb9 (Supraprimates)","laurasiatheria_odb9 (Placental Mammals)","protists_ensembl (Protist)","alveolata_stramenophiles_ensembl (Protist)"))),
+          div(style="display:inline-block;vertical-align:top;", bsButton("q7", label = "", icon = icon("info"), style = "info", size = "extra-small"))
+        ),
+        bsPopover(id = "q7", title = "",
+                  
+                  content = paste("This field is required to calculate the percentage of Benchmark Universal Single-Copy Orthologs(BUSCO)",
+                                  "in your genome assembly to provide intuitive quantitative measures of genomic data completeness in",
+                                  "terms of expected gene content. BUSCO datasets are lineage-specific profiles. Genes in these datasets",
+                                  "are selected from orthologous groups with genes present as single-copy orthologs in at least 90% of", 
+                                  "the species. For more info visit this link: https://busco.ezlab.org/", sep = "<br>"),
+                  placement = "right",
+                  trigger = "click",  options=list(container="body")),
+        div(
+          div(style="width:90%; display:inline-block; vertical-align: middle;", selectInput("augustus_species", label = HTML('<p> AUGUSTUS Species (select one)<span style="color: red; font-size:150%;">*</span></p>'), c("maize","adorsata","aedes","amphimedon","ancylostoma_ceylanicum","anidulans","arabidopsis","aspergillus_fumigatus","aspergillus_nidulans","aspergillus_oryzae","aspergillus_terreus","bombus_impatiens1","bombus_terrestris2","botrytis_cinerea","b_pseudomallei","brugia","cacao","caenorhabditis","camponotus_floridanus","candida_albicans","candida_guilliermondii","candida_tropicalis","c_elegans_trsk","chaetomium_globosum","chicken","chlamy2011","chlamydomonas","chlorella","coccidioides_immitis","Conidiobolus_coronatus","coprinus","coprinus_cinereus","coyote_tobacco","cryptococcus","cryptococcus_neoformans_gattii","cryptococcus_neoformans_neoformans_B","cryptococcus_neoformans_neoformans_JEC21","culex","debaryomyces_hansenii","E_coli_K12","elephant_shark","encephalitozoon_cuniculi_GB","eremothecium_gossypii","fly","fusarium","fusarium_graminearum","galdieria","generic","heliconius_melpomene1","histoplasma","histoplasma_capsulatum","honeybee1","human","japaneselamprey","kluyveromyces_lactis","laccaria_bicolor","leishmania_tarentolae","lodderomyces_elongisporus","magnaporthe_grisea","maize5","nasonia","neurospora","neurospora_crassa","parasteatoda","pchrysosporium","pea_aphid","pfalciparum","phanerochaete_chrysosporium","pichia_stipitis","pneumocystis","rhizopus_oryzae","rhodnius","rice","saccharomyces","saccharomyces_cerevisiae_rm11-1a_1","saccharomyces_cerevisiae_S288C","s_aureus","schistosoma","schistosoma2","schizosaccharomyces_pombe","sealamprey","s_pneumoniae","sulfolobus_solfataricus","template_prokaryotic","tetrahymena","thermoanaerobacter_tengcongensis","tomato","toxoplasma","tribolium2012","trichinella","ustilago","ustilago_maydis","verticillium_albo_atrum1","verticillium_longisporum1","volvox","wheat","Xipophorus_maculatus","yarrowia_lipolytica","zebrafish"))),
+          div(style="display:inline-block;vertical-align:top;", bsButton("q8", label = "", icon = icon("info"), style = "info", size = "extra-small"))),
+        
+        bsPopover(id = "q8", title = "",
+                  
+                  content = paste("This field is also required to calculate the BUSCO scores for your genome", 
+                                  "assembly. Currently, AUGUSTUS (gene prediction program used in BUSCO pipeline)",
+                                  "has been trained for predicting genes in this species list. If your species is not", 
+                                  "listed in the drop-down menu, please select the closely related species. More", 
+                                  "info here: http://bioinf.uni-greifswald.de/augustus/", sep = "<br>"),
+                  placement = "right",
+                  trigger = "click",  options=list(container="body")),
+        
+        
+
+        helpText(HTML('<p style="color:red; fontsize: 9pt">Maximum upload limit for genome fasta file is 1Gb (compressed file size)</p>')),
+        
+        
+        div(
+          div(style="width:90%; display:inline-block; vertical-align: middle;", fileInput("fasta_file1", label = HTML('<p> Upload Genome Fasta File (.gz format)<span style="color: red; font-size:150%;">*</span></p>'),  accept = c(".gz",".zip"), multiple = FALSE)),
+          div(style="display:inline-block; vertical-align: top;", bsButton("q9", label = "", icon = icon("info"), style = "info", size = "extra-small", shape = "circular"))
+        ),
+        
+        bsPopover(id = "q9", title = "",
+                  
+                  content = paste("Please compress your genome fasta file and upload the",
+                                  ".gz compression file only. Info on this format", 
+                                  "here: https://en.wikipedia.org/wiki/Gzip", sep = "<br>"),
+                  placement = "top",
+                  trigger = "click",  options=list(container="body")),
+        actionButton("go1", "Click To Submit Your Job", style = "color: blue; font-size:150%; font-weight: bold; height: 50px;
+                        width: 300px"),
+        
+        helpText(HTML('<p style="color:black; font-size: 20px">Download your results</p>')),
+    
+        downloadButton('assemblyplot1', 'Download NG(X)plot'),
+        downloadButton('downloadassemblytable1', 'Download asssembly metrics table')
+        
+               ),
+        mainPanel(
+          fluidRow(
+            helpText(HTML('<p style="color:red; fontsize: 9pt">Please click on each tab from left to right one at a time, explore the tab completely, download its results and then move on to next tab. Click the busco and contamination tab at the very end only.</p>')),
+            helpText(HTML('<p style="color:green; fontsize: 9pt; font-weight: bold">Pop-up plots on clicking rows of Assembly metrics table!!!!</p>')),
+            tabsetPanel(
+              tabPanel("Assembly NG(x) Plot", helpText("If you uploaded a big genome you might experience a short lag period when you click this tab and when your job gets started. NG(X) plots provide information on the contiguity of the assembled genome sequence. Higher the curve, better is the quality of the assembly in terms of contiguity."),  plotOutput("NGX_plot1")),
+              tabPanel("Assembly Metrics Table", helpText("If you uploaded a big genome you might experience a short lag period when you click this tab and when your job gets started. This tab outputs different metrics like number of scaffolds, L50, N50, LG50, NG50, gaps percentage values. A good quality assembly will have less number of total scaffolds, higher N50,NG50 values and lower L50, LG50, %N values."), DT::dataTableOutput("lengthmetrics1")),
+              tabPanel("Assembly Busco and Contamination Plots", helpText("You might experience a short lag period when you click this tab and when your BUSCO job gets submitted to the server. This tab outputs the % of busco genes. This tab outputs the % of busco genes. A good quality assembly and annotation should have higher number of complete and single copy buscos and lower number of fragmented and missing busco genes. For contamination analysis, the assembled sequences are screened against the NCBI UniVec database to quickly identify sequences of vector origin or those of adaptors or linkers. Please be patient. All the plots will be emailed once the analysis is finished"), htmlOutput("assembly_busco_plot"))
+              
+            )
+          )
+        )
+      )
+    ),
+    
+    tabPanel("Analyse your genome annotation", fluid = TRUE,
+             
+             sidebarLayout(
+               sidebarPanel(
+                 HTML(
+                   "Please click the blue icon on the right of each input field to get more info about the input field.", 
+                   "Click again on the icon after reading the info to close the pop-up box", sep = "<br/>"),
+                 tags$style(".popover{
+                            max-width: 100%;}"),
+        
+                 div(
+                   div(style="width:90%; display:inline-block; vertical-align: middle;", pickerInput(
+                     inputId = "references2", 
+                     label = HTML('<p> Reference Genomes</p>'),
+                     choices = c("B73_v4", "W22_v2", "Mo17"),          
+                     #choices = c("Maize_B73_v4", "Maize_W22_v2", "Maize_Mo17", "Sorghum_bicolor_NCBIv3", "Oryza_sativa_japonica_Build_4.0", "Arabidopsis_TAIR10.1"),
+                      options = list(
+                       `actions-box` = TRUE, 
+                       size = 10,
+                       `selected-text-format` = "count > 3"
+                     ), 
+                     multiple = TRUE
+                   )),
+                   div(style="display:inline-block;vertical-align:top;", bsButton("q10", label = "", icon = icon("info"), style = "info", size = "extra-small"))
+                 ),
+                 bsPopover(id = "q10", title = "",
+                           
+                           content = paste("When the values in this field are selected, the app will",
+                                           "provide you comparison of pre-computed reference/database values and also",
+                                           "allows you to compare your genome results with these values", sep = "<br>"),
+                           placement = "right",
+                           trigger = "click",  options=list(container="body")),
+                 div(
+                   div(style="width:90%; display:inline-block; vertical-align: middle;",  textInput("id2", label = HTML('<p> Enter your email address<span style="color: red; font-size:150%;">*</span></p>'), value = "")),
+                   div(style="display:inline-block;vertical-align:top;", bsButton("q11", label = "", icon = icon("info"), style = "info", size = "extra-small"))
+                 ),
+                 bsPopover(id = "q11", title = "",
+                           content = paste("Busco analysis results will", 
+                                           "be emailed to this address", sep = "<br>"),
+                           placement = "right",
+                           trigger = "click",  options=list(container="body")),
+
+                  helpText(HTML('<p style="color:red; fontsize: 9pt">Provide just one word for the name</p>')),
+                  div(
+                   div(style="display:inline-block;vertical-align:top;",  textInput("user_input2", label = HTML('<p> Name of your genome annotation<span style="color: red; font-size:150%;">*</span></p>'), value = "")),
+                   div(style="display:inline-block;vertical-align:top;", bsButton("q12", label = "", icon = icon("info"), style = "info", size = "extra-small"))
+                 ),
+                 bsPopover(id = "q12", title = "",
+                           content = paste("Provide just one word.", 
+                                           "The value in this input field will be used to label",
+                                           "the resulting plots and table.",
+                                           "", sep = "<br>"),
+                           placement = "right",
+                           trigger = "click",  options=list(container="body")),
+                 
+        
+                 div(
+                   div(style="width:90%; display:inline-block; vertical-align: middle;", selectInput("busco_sets2", label = HTML('<p> Busco Datasets (select one)<span style="color: red; font-size:150%;">*</span></p>'), c("embryophyta_odb9 (Plants)","bacteria_odb9 (Bacteria)","proteobacteria_odb9 (Bacteria)","rhizobiales_odb9 (Bacteria)","betaproteobacteria_odb9 (Bacteria)","gammaproteobacteria_odb9 (Bacteria)","enterobacteriales_odb9 (Bacteria)","deltaepsilonsub_odb9 (Bacteria)","actinobacteria_odb9 (Bacteria)","cyanobacteria_odb9 (Bacteria)","firmicutes_odb9 (Bacteria)","clostridia_odb9 (Bacteria)","lactobacillales_odb9 (Bacteria)","bacillales_odb9 (Bacteria)","bacteroidetes_odb9 (Bacteria)","spirochaetes_odb9 (Bacteria)","tenericutes_odb9 (Bacteria)", "eukaryota_odb9 (Eukaryota)","fungi_odb9 (Fungi)","microsporidia_odb9 (Fungi)","dikarya_odb9 (Fungi)","ascomycota_odb9 (Fungi)","pezizomycotina_odb9 (Fungi)","eurotiomycetes_odb9 (Fungi)","sordariomyceta_odb9 (Fungi)","saccharomyceta_odb9 (Fungi)","saccharomycetales_odb9 (Fungi)","basidiomycota_odb9 (Fungi)","metazoa_odb9 (Metazoa)","nematoda_odb9 (Roundworms)","arthropoda_odb9 (Insects)","insecta_odb9 (Insects)","endopterygota_odb9 (Insects)","hymenoptera_odb9 (Insects)","diptera_odb9 (Insects)","vertebrata_odb9 (Vertebrates)","actinopterygii_odb9 (Ray-finned fishes)","tetrapoda_odb9 (Tetrapods)","aves_odb9 (Birds)","mammalia_odb9 (Mammals)","euarchontoglires_odb9 (Supraprimates)","laurasiatheria_odb9 (Placental Mammals)","protists_ensembl (Protist)","alveolata_stramenophiles_ensembl (Protist)"))),
+                   div(style="display:inline-block;vertical-align:top;", bsButton("q13", label = "", icon = icon("info"), style = "info", size = "extra-small"))
+                 ),
+                 bsPopover(id = "q13", title = "",
+                           
+                           content = paste("This field is required to calculate the percentage of Benchmark Universal Single-Copy Orthologs(BUSCO)",
+                                           "in your genome annotation set to provide intuitive quantitative measures of genomic data completeness in",
+                                           "terms of expected gene content. BUSCO datasets are lineage-specific profiles. Genes in these datasets",
+                                           "are selected from orthologous groups with genes present as single-copy orthologs in at least 90% of", 
+                                           "the species. For more info visit this link: https://busco.ezlab.org/", sep = "<br>"),
+                           placement = "right",
+                           trigger = "click",  options=list(container="body")),
+
+                 helpText(HTML('<p style="color:red; fontsize: 9pt">Maximum upload limit for genome fasta file is 1Gb (compressed file size)</p>')),
+        
+        
+                 div(
+                   div(style="width:90%; display:inline-block; vertical-align: middle;", fileInput("fasta_file2", label = HTML('<p> Upload Genome Fasta File (.gz format)<span style="color: red; font-size:150%;">*</span></p>'),  accept = c(".gz",".zip"), multiple = FALSE)),
+                   div(style="display:inline-block; vertical-align: top;", bsButton("q14", label = "", icon = icon("info"), style = "info", size = "extra-small", shape = "circular"))
+                 ),
+                 
+                 bsPopover(id = "q14", title = "",
+                           
+                           content = paste("Please compress your genome fasta file and upload the",
+                                           ".gz compression file only. Info on this format", 
+                                           "here: https://en.wikipedia.org/wiki/Gzip", sep = "<br>"),
+                           placement = "top",
+                           trigger = "click",  options=list(container="body")),
+        
+
+        helpText(HTML('<p style="color:red; fontsize: 1pt">Busco analysis of gene structural annotations requires that every contig or chromosome name found in the 1st column of the input GFF file must have a corresponding sequence entry in fasta file as shown here: 
+https://www.ncbi.nlm.nih.gov/genome/167?genome_assembly_id=161521 .As an alternative, you could upload corresponding transcript fasta file in addition to the GFF file.</p>')),
+        
+        div(
+          div(style="width:90%; display:inline-block; vertical-align: middle;", fileInput("gff_file", label = HTML('<p> Upload Structure Annotation File (gff, gff3 or gtf format in .gz compression)<span style="color: red; font-size:150%;">*</span></p>'),
+                                                                                          accept = ".gz")),
+          div(style="display:inline-block;vertical-align:top;", bsButton("q15", label = "", icon = icon("info"), style = "info", size = "extra-small"))),
+          bsPopover(id = "q15", title = "",
+                  
+                  content = paste("Please compress your genome annotation file and upload the",
+                                  ".gz compression file only.",
+                                  "Visit this link for more info on structure annotation file",
+                                  "formats: https://useast.ensembl.org/info/website/upload/gff3.html", sep = "<br>"),
+                  placement = "top",
+                  trigger = "click",  options=list(container="body")),
+        div(
+          div(style="width:90%; display:inline-block; vertical-align: middle;", fileInput("transcripts_file", "Upload Transcripts Fasta File (.gz compression format)",
+                                                                                          accept = ".gz")),
+          div(style="display:inline-block;vertical-align:top;", bsButton("q16", label = "", icon = icon("info"), style = "info", size = "extra-small"))),
+          bsPopover(id = "q16", title = "",
+                  
+                  content = paste("This field is required to calculate annotation BUSCO scores.",
+                                  "Currently the app is configured to use the information from transcripts",
+                                  "fasta file if the user uploads it. if the user does not upload the",
+                                  "transcripts file, the app will check if the information in the first",
+                                  "column of gff file corresponds to the headers in the fasta file as shown",
+                                  "in the example. If there is discrepancy, it will print an error message,",
+                                  "else the job will be submitted.", sep = "<br>"),
+                  placement = "top",
+                  trigger = "click",  options=list(container="body")),
+        
+        actionButton("go2", "Click To Submit Your Job", style = "color: blue; font-size:150%; font-weight: bold; height: 50px;
+                        width: 300px"),
+        
+        helpText(HTML('<p style="color:black; font-size: 20px">Download your results </p>')),
+        downloadButton('downloadannotationtable1', 'Download annotation metrics table')
+               ),
+        mainPanel(
+          fluidRow(
+            helpText(HTML('<p style="color:red; fontsize: 9pt">Please click on each tab from left to right one at a time, explore the tab completely, download its results and then move on to next tab. Click the busco tab at the very end only.</p>')),
+            helpText(HTML('<p style="color:green; fontsize: 9pt; font-weight: bold">Pop-up plots on clicking rows of Annotation metrics table!!!!</p>')),
+            tabsetPanel(
+              tabPanel("Annotation Metrics Table", helpText("If you uploaded a big genome you might experience a short lag period when you click this tab and when your job gets started. This tab provides a summary of different annotation metrics like number and average length of gene models, exons, transcripts, etc."), DT::dataTableOutput("annotationmetrics1")),
+              tabPanel("Annotation Busco Plot", helpText("You might experience a short lag period when you click this tab and when your BUSCO job gets submitted to the server. This tab outputs the % of busco genes. This tab outputs the % of busco genes. A good quality assembly and annotation should have higher number of complete and single copy buscos and lower number of fragmented and missing busco genes. Please be patient. All the plots will be emailed once the analysis is finished"), htmlOutput("annotation_busco_plot"))
+            )
+          )
+        )
+      )
+    )
+)
