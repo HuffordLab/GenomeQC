@@ -1,1 +1,0 @@
-This is our directory for drafting a manuscript to describe our assembly metric software.
