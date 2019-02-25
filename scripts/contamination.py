@@ -124,7 +124,7 @@ if file_s == 0:
    server = smtplib.SMTP("smtp.gmail.com:587")
    server.ehlo()
    server.starttls()
-   server.login("assemblyshine@gmail.com", "rshiny@2020")
+   server.login("assemblyshine@gmail.com", "password")
 
 
    server.sendmail(msg['From'], emaillist , msg.as_string())
@@ -267,6 +267,6 @@ else:
   server = smtplib.SMTP("smtp.gmail.com:587")
   server.ehlo()
   server.starttls()
-  server.login("assemblyshine@gmail.com", "rshiny@2020")
+  server.login("assemblyshine@gmail.com", "password")
 
   server.sendmail(msg['From'], emaillist , msg.as_string())               
