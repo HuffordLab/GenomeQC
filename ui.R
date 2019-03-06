@@ -163,7 +163,7 @@ Genomes greater than 1.5 Gb: >1 day</p>
     )
   ),
         
-    tabPanel("Analyse your genome assembly", fluid = TRUE,
+    tabPanel("Analyze your genome assembly", fluid = TRUE,
              
              sidebarLayout(
                sidebarPanel(
@@ -300,7 +300,7 @@ Genomes greater than 1.5 Gb: >1 day</p>
       )
     ),
     
-    tabPanel("Analyse your genome annotation", fluid = TRUE,
+    tabPanel("Analyze your genome annotation", fluid = TRUE,
              
              sidebarLayout(
                sidebarPanel(
