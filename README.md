@@ -102,7 +102,7 @@ GNU GPL V3.
 
 Nancy Manchanda, John L. Portwood II, Margaret R. Woodhouse, Arun S.
 Seetharam, Carson M. Andorf, Matthew B. Hufford; GenomeQC: An
-R/Shiny-based quality assessment tool for plant genome assemblies and
+R/Shiny-based quality assessment tool for genome assemblies and
 gene annotations, *Bioinformatics*, , XXX
 
 **Acknowledgements**
