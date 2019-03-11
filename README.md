@@ -4,7 +4,7 @@ GenomeQC generates descriptive summaries with intuitive graphics for
 genome assembly and structural annotations. It also benchmarks user
 supplied assemblies and annotations against the publicly available
 reference genomes of their choice. It is optimized for small and medium
-sized plant genomes (&lt;2.5 Gb) and has pre-computed results for
+sized genomes (&lt;2.5 Gb) and has pre-computed results for
 several maize genomes.
 
 **Installation**
