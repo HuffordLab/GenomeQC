@@ -23,6 +23,6 @@ Example:
 docker run -v ~/my-scratch-dir:/working-dir -w /working-dir annotationqc GCF_000001735.4_TAIR10.1_genomic.gff output_gff
 GCF_000001735.4_TAIR10.1_rna.fna output_buscogff embryophyta_odb9 4
 
-Plotting NG graph from the NG values: 
+For plotting NG graph from the NG values (This is a seperate R script outside the container): 
 
 Rscript NG.R <NG_file>
