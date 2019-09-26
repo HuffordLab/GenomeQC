@@ -24,7 +24,7 @@ records = list(SeqIO.parse(inputfile, "fasta"))
 
 number_of_scaffolds = len(records)
 
-print(number_of_scaffolds)
+print("Number of scaffolds:", number_of_scaffolds)
 
 
 
@@ -32,51 +32,51 @@ len_seq = [len(rec) for rec in records]
 
 total_size_scaffolds = sum(len_seq)
 
-print(total_size_scaffolds)
+print("Total size of the scaffolds:", total_size_scaffolds)
 
 total_scaffold_length_percentage_genome_size = ((total_size_scaffolds/(estimated_genome_size*1000000))*100)
 
-print(total_scaffold_length_percentage_genome_size)
+print("Total scaffold size as percentage of assumed genome size:", total_scaffold_length_percentage_genome_size)
 
 number_seq_greater_25k = sorted(i for i in len_seq if i>25000)
 
-print(sum(number_seq_greater_25k))
+print("Useful amount of scaffold sequences (>=25 Kb):", sum(number_seq_greater_25k))
 
-print((sum(number_seq_greater_25k)/(estimated_genome_size*1000000))*100)
+print("% of estimated genome that is useful:", (sum(number_seq_greater_25k)/(estimated_genome_size*1000000))*100)
 
-print(max(len_seq))
+print("Longest scaffold (bp):", max(len_seq))
 
-print(min(len_seq))
+print("Shortest scaffold (bp):", min(len_seq))
 
 number_seq_greater_1k = len(sorted(i for i in len_seq if i>1000))
 
-print(number_seq_greater_1k)
+print("Number of scaffolds > 1 Kb:", number_seq_greater_1k)
 
-print((number_seq_greater_1k/number_of_scaffolds)*100)
+print("Percentage of scaffolds > 1 Kb:", (number_seq_greater_1k/number_of_scaffolds)*100)
 
 number_seq_greater_10k = len(sorted(i for i in len_seq if i>10000))
 
-print(number_seq_greater_10k)
+print("Number of scaffolds greater than 10 Kb:", number_seq_greater_10k)
 
-print((number_seq_greater_10k/number_of_scaffolds)*100)
+print("Percentage of scaffolds greater than 10 Kb:", (number_seq_greater_10k/number_of_scaffolds)*100)
 
 number_seq_greater_100k = len(sorted(i for i in len_seq if i>100000))
 
-print(number_seq_greater_100k)
+print("Number of scaffolds greater than 100 Kb:", number_seq_greater_100k)
 
-print((number_seq_greater_100k/number_of_scaffolds)*100)
+print("Percentage of scaffolds greater than 100 Kb:", (number_seq_greater_100k/number_of_scaffolds)*100)
 
 number_seq_greater_1M = len(sorted(i for i in len_seq if i>1000000))
 
-print(number_seq_greater_1M)
+print("Number of scaffolds greater than 1 Mb:", number_seq_greater_1M)
 
-print((number_seq_greater_1M/number_of_scaffolds)*100)
+print("Percentage of scaffolds greater than 1 Mb:", (number_seq_greater_1M/number_of_scaffolds)*100)
 
 number_seq_greater_10M = len(sorted(i for i in len_seq if i>10000000))
 
-print(number_seq_greater_10M)
+print("Number of scaffolds greater than 10 Mb:", number_seq_greater_10M)
 
-print((number_seq_greater_10M/number_of_scaffolds)*100)
+print("Percentage of scaffolds greater than 10 Mb:", (number_seq_greater_10M/number_of_scaffolds)*100)
 
 
 #calculates N50 and L50 values
@@ -112,9 +112,9 @@ for con in sorted_len:
 
 
 
-print (N50)
+print ("N50 (bp):", N50)
 
-print (L50)
+print ("L50:", L50)
 
 
 #calculates NG50 and LG50 values
@@ -148,8 +148,8 @@ for conNG50 in sorted_len:
 
 
 
-print (NG50)
-print (LG50)
+print ("NG50:", NG50)
+print ("LG50:", LG50)
 
 #calculates A,C,G,T,N percentages
 counterA1 = 0
@@ -161,7 +161,7 @@ for record in records:
     counterA2 += record.seq.count('a')
 
 
-print (((counterA1+counterA2)/total_size_scaffolds)*100)
+print ("%A:", ((counterA1+counterA2)/total_size_scaffolds)*100)
 
 
 counterC1 = 0
@@ -174,7 +174,7 @@ for record in records:
     counterC2 += record.seq.count('c')
 
 
-print (((counterC1+counterC2)/total_size_scaffolds)*100)
+print ("%C:",((counterC1+counterC2)/total_size_scaffolds)*100)
 
 counterG1 = 0
 counterG2 = 0
@@ -184,7 +184,7 @@ for record in records:
     counterG1 += record.seq.count('G')
     counterG1 += record.seq.count('g')
 
-print (((counterG1+counterG2)/total_size_scaffolds)*100)
+print ("%G:",((counterG1+counterG2)/total_size_scaffolds)*100)
 
 
 
@@ -196,7 +196,7 @@ for record in records:
     counterT1 += record.seq.count('T')
     counterT2 += record.seq.count('t')
 
-print (((counterT1+counterT2)/total_size_scaffolds)*100)
+print ("%T:",((counterT1+counterT2)/total_size_scaffolds)*100)
 
 
 
@@ -207,7 +207,7 @@ for record in records:
     counterN += record.seq.count('N')
 
 
-print (counterN)
-print ((counterN/total_size_scaffolds)*100)
+print ("Number of Ns:", counterN)
+print ("%N:", (counterN/total_size_scaffolds)*100)
 
 sys.stdout.close()
