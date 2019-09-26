@@ -49,19 +49,19 @@ for line in open(inputfile,'r'):
                  
 
 
-print(num_gene_models)
-print(min(gene_length_list))
-print(max(gene_length_list))
+print("Number of gene models:", num_gene_models)
+print("Minumum gene length:", min(gene_length_list))
+print("Maximum gene length:", max(gene_length_list))
 average_gene_length = round(sum(gene_length_list)/len(gene_length_list),1)
-print(average_gene_length)
-print(num_exons)
+print("Average gene length:", average_gene_length)
+print("Total number of exons:", num_exons)
 average_number_exons = round((num_exons/num_gene_models),1)
-print(average_number_exons)
+print("Average number of exons per gene model:", average_number_exons)
 average_exon_length = round((sum(exon_length_list)/len(exon_length_list)),1)
-print(average_exon_length)
-print(num_transcripts)
+print("Average exon length:", average_exon_length)
+print("Number of transcripts:", num_transcripts)
 average_number_transcripts = round((num_transcripts/num_gene_models),1)
-print(average_number_transcripts)
-print(len(gene_models_less200))
+print("Average number of transcripts per gene model:",average_number_transcripts)
+print("Number of gene models less than 200 bp:", len(gene_models_less200))
 
 
