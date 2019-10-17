@@ -100,10 +100,9 @@ GNU GPL V3.
 
 **How to cite GenomeQC**
 
-Nancy Manchanda, John L. Portwood II, Margaret R. Woodhouse, Arun S.
-Seetharam, Carson M. Andorf, Matthew B. Hufford; GenomeQC: An
-R/Shiny-based quality assessment tool for genome assemblies and
-gene annotations, *Bioinformatics*, , XXX
+GenomeQC: A quality assessment tool for genome assemblies and gene structure annotations
+Nancy Manchanda, John L. Portwood II, Margaret R. Woodhouse, Arun S. Seetharam, Carolyn J. Lawrence-Dill, Carson M. Andorf, Matthew B. Hufford
+bioRxiv 795237; doi: https://doi.org/10.1101/795237
 
 **Acknowledgements**
 
