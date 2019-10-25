@@ -435,9 +435,17 @@ https://www.ncbi.nlm.nih.gov/genome/167?genome_assembly_id=161521 .As an alterna
         )
       )
     )
-)
-
-        
+),
+    tags$head(
+        tags$meta(name="twitter:card", content="summary"),
+        tags$meta(name="twitter:site", content="@MaizeGDB"),
+        tags$meta(name="twitter:creator", content="@MaizeGDB"),
+        tags$meta(property="og:url", content="https://genomeqc.maizegdb.org/"),
+        tags$meta(property="og:title", content="Welcome to the GenomeQC website!"),
+        tags$meta(property="og:description", content="GenomeQC is a user-friendly and interactive platform that generates descriptive summaries with intuitive graphics for genome assemblies and structural annotations. It also benchmarks user supplied assemblies and annotations against the publicly available reference genomes of their choice."),
+        tags$meta(property="og:image", content="https://genomeqc.maizegdb.org/gqc_white_background_transparent.jpg")
+    )
+)        
         
         
         
