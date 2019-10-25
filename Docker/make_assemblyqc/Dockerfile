@@ -38,7 +38,7 @@ RUN apt-get install -y libmysql++-dev
 RUN apt-get install -y libbz2-dev liblzma-dev
 RUN apt-get install -y libncurses5-dev
 RUN apt-get install -y libssl-dev libcurl4-openssl-dev
-RUN wget http://bioinf.uni-greifswald.de/augustus/binaries/augustus-3.3.1.tar.gz
+RUN wget http://bioinf.uni-greifswald.de/augustus/binaries/old/augustus-3.3.1.tar.gz
 RUN mkdir /opt/augustus
 RUN mv augustus-3.3.1.tar.gz /opt/augustus
 WORKDIR /opt/augustus
