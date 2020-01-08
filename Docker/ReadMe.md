@@ -35,4 +35,4 @@ For genome annotation quality assessment:
 
 **For plotting NG graph from the NG values (This is a seperate R script outside the container):**
 
-``` Rscript NG.R <NG_file> ```
+``` Rscript NG.R -f file1, file2, file3.. ```
