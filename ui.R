@@ -143,7 +143,7 @@ Genomes greater than 1.5 Gb: >1 day</p>
                     width: 300px"),
         
         helpText(HTML('<p style="color:black; font-size: 20px">Download your results</p>')),
-        downloadButton('assemblyplot', 'Download NG(X)plot'),
+        downloadButton('assemblyplot', 'Download NG(X)values'),
         downloadButton('downloadassemblytable', 'Download asssembly metrics table'),
         downloadButton('downloadannotationtable', 'Download annotation metrics table')
       ),
@@ -207,7 +207,7 @@ Genomes greater than 1.5 Gb: >1 day</p>
                  
         helpText(HTML('<p style="color:red; fontsize: 9pt">Provide just one word for the name</p>')),
         div(
-          div(style="display:inline-block;vertical-align:top;",  textInput("user_input1", label = HTML('<p> Name of your genome assembly<span style="color: red; font-size:150%;">*</span></p>'), value = "")),
+          div(style="display:inline-block;vertical-align:top;",  textInput("user_input1", label = HTML('<p> Name of your genome assembly1<span style="color: red; font-size:150%;">*</span></p>'), value = "")),
           div(style="display:inline-block;vertical-align:top;", bsButton("q5", label = "", icon = icon("info"), style = "info", size = "extra-small"))
          ),
         bsPopover(id = "q5", title = "",
@@ -264,7 +264,7 @@ Genomes greater than 1.5 Gb: >1 day</p>
         
         
         div(
-          div(style="width:90%; display:inline-block; vertical-align: middle;", fileInput("fasta_file1", label = HTML('<p> Upload Genome Fasta File (.gz format)<span style="color: red; font-size:150%;">*</span></p>'),  accept = c(".gz",".zip"), multiple = FALSE)),
+          div(style="width:90%; display:inline-block; vertical-align: middle;", fileInput("fasta_file1", label = HTML('<p> Upload Genome Fasta File1 (.gz format)<span style="color: red; font-size:150%;">*</span></p>'),  accept = c(".gz",".zip"), multiple = FALSE)),
           div(style="display:inline-block; vertical-align: top;", bsButton("q9", label = "", icon = icon("info"), style = "info", size = "extra-small", shape = "circular"))
         ),
         
@@ -275,12 +275,25 @@ Genomes greater than 1.5 Gb: >1 day</p>
                                   "here: https://en.wikipedia.org/wiki/Gzip", sep = "<br>"),
                   placement = "top",
                   trigger = "click",  options=list(container="body")),
+       helpText(HTML('<p style="color:red; fontsize: 9pt">Maximum upload limit for genome fasta file is 1Gb (compressed file size)</p>')),
+        div(
+          div(style="width:90%; display:inline-block; vertical-align: middle;", fileInput("fasta_file3", label = HTML('<p> Upload Genome Fasta File2 (.gz format)</p>'),  accept = c(".gz",".zip"), multiple = FALSE)),
+          div(style="display:inline-block; vertical-align: top;", bsButton("q10", label = "", icon = icon("info"), style = "info", size = "extra-small", shape = "circular"))
+        ),
+
+        bsPopover(id = "q10", title = "",
+
+                  content = paste("Please compress your genome FASTA file and upload the",
+                                  ".gz compression file only. Info on this format",
+                                  "here: https://en.wikipedia.org/wiki/Gzip", sep = "<br>"),
+                  placement = "top",
+                  trigger = "click",  options=list(container="body")),
         actionButton("go1", "Click To Submit Your Job", style = "color: blue; font-size:150%; font-weight: bold; height: 50px;
                         width: 300px"),
         
         helpText(HTML('<p style="color:black; font-size: 20px">Download your results</p>')),
     
-        downloadButton('assemblyplot1', 'Download NG(X)plot'),
+        downloadButton('assemblyplot1', 'Download NG(X)values'),
         downloadButton('downloadassemblytable1', 'Download asssembly metrics table')
         
                ),
@@ -322,9 +335,9 @@ Genomes greater than 1.5 Gb: >1 day</p>
                      ), 
                      multiple = TRUE
                    )),
-                   div(style="display:inline-block;vertical-align:top;", bsButton("q10", label = "", icon = icon("info"), style = "info", size = "extra-small"))
+                   div(style="display:inline-block;vertical-align:top;", bsButton("q11", label = "", icon = icon("info"), style = "info", size = "extra-small"))
                  ),
-                 bsPopover(id = "q10", title = "",
+                 bsPopover(id = "q11", title = "",
                            
                            content = paste("When the values in this field are selected, the app will",
                                            "provide you comparison of pre-computed reference/database values and also",
@@ -333,9 +346,9 @@ Genomes greater than 1.5 Gb: >1 day</p>
                            trigger = "click",  options=list(container="body")),
                  div(
                    div(style="width:90%; display:inline-block; vertical-align: middle;",  textInput("id2", label = HTML('<p> Enter your email address<span style="color: red; font-size:150%;">*</span></p>'), value = "")),
-                   div(style="display:inline-block;vertical-align:top;", bsButton("q11", label = "", icon = icon("info"), style = "info", size = "extra-small"))
+                   div(style="display:inline-block;vertical-align:top;", bsButton("q12", label = "", icon = icon("info"), style = "info", size = "extra-small"))
                  ),
-                 bsPopover(id = "q11", title = "",
+                 bsPopover(id = "q12", title = "",
                            content = paste("BUSCO analysis results will", 
                                            "be emailed to this address", sep = "<br>"),
                            placement = "right",
@@ -344,9 +357,9 @@ Genomes greater than 1.5 Gb: >1 day</p>
                   helpText(HTML('<p style="color:red; fontsize: 9pt">Provide just one word for the name</p>')),
                   div(
                    div(style="display:inline-block;vertical-align:top;",  textInput("user_input2", label = HTML('<p> Name of your genome annotation<span style="color: red; font-size:150%;">*</span></p>'), value = "")),
-                   div(style="display:inline-block;vertical-align:top;", bsButton("q12", label = "", icon = icon("info"), style = "info", size = "extra-small"))
+                   div(style="display:inline-block;vertical-align:top;", bsButton("q13", label = "", icon = icon("info"), style = "info", size = "extra-small"))
                  ),
-                 bsPopover(id = "q12", title = "",
+                 bsPopover(id = "q13", title = "",
                            content = paste("Please provide a one word name for your assembly.", 
                                            "The value in this input field will be used to label",
                                            "the resulting plots and table.",
@@ -357,9 +370,9 @@ Genomes greater than 1.5 Gb: >1 day</p>
         
                  div(
                    div(style="width:90%; display:inline-block; vertical-align: middle;", selectInput("busco_sets2", label = HTML('<p> BUSCO Datasets (select one)<span style="color: red; font-size:150%;">*</span></p>'), c("embryophyta_odb9 (Plants)","bacteria_odb9 (Bacteria)","proteobacteria_odb9 (Bacteria)","rhizobiales_odb9 (Bacteria)","betaproteobacteria_odb9 (Bacteria)","gammaproteobacteria_odb9 (Bacteria)","enterobacteriales_odb9 (Bacteria)","deltaepsilonsub_odb9 (Bacteria)","actinobacteria_odb9 (Bacteria)","cyanobacteria_odb9 (Bacteria)","firmicutes_odb9 (Bacteria)","clostridia_odb9 (Bacteria)","lactobacillales_odb9 (Bacteria)","bacillales_odb9 (Bacteria)","bacteroidetes_odb9 (Bacteria)","spirochaetes_odb9 (Bacteria)","tenericutes_odb9 (Bacteria)", "eukaryota_odb9 (Eukaryota)","fungi_odb9 (Fungi)","microsporidia_odb9 (Fungi)","dikarya_odb9 (Fungi)","ascomycota_odb9 (Fungi)","pezizomycotina_odb9 (Fungi)","eurotiomycetes_odb9 (Fungi)","sordariomyceta_odb9 (Fungi)","saccharomyceta_odb9 (Fungi)","saccharomycetales_odb9 (Fungi)","basidiomycota_odb9 (Fungi)","metazoa_odb9 (Metazoa)","nematoda_odb9 (Roundworms)","arthropoda_odb9 (Insects)","vertebrata_odb9 (Vertebrates)","mammalia_odb9 (Mammals)","protists_ensembl (Protist)"))),
-                   div(style="display:inline-block;vertical-align:top;", bsButton("q13", label = "", icon = icon("info"), style = "info", size = "extra-small"))
+                   div(style="display:inline-block;vertical-align:top;", bsButton("q14", label = "", icon = icon("info"), style = "info", size = "extra-small"))
                  ),
-                 bsPopover(id = "q13", title = "",
+                 bsPopover(id = "q14", title = "",
                            
                            content = paste("This field is required to calculate the percentage of Benchmark Universal Single-Copy Orthologs(BUSCO)",
                                            "in your genome annotation set to provide intuitive quantitative measures of genomic data completeness in",
@@ -374,10 +387,10 @@ Genomes greater than 1.5 Gb: >1 day</p>
         
                  div(
                    div(style="width:90%; display:inline-block; vertical-align: middle;", fileInput("fasta_file2", label = HTML('<p> Upload Genome Fasta File (.gz format)<span style="color: red; font-size:150%;">*</span></p>'),  accept = c(".gz",".zip"), multiple = FALSE)),
-                   div(style="display:inline-block; vertical-align: top;", bsButton("q14", label = "", icon = icon("info"), style = "info", size = "extra-small", shape = "circular"))
+                   div(style="display:inline-block; vertical-align: top;", bsButton("q15", label = "", icon = icon("info"), style = "info", size = "extra-small", shape = "circular"))
                  ),
                  
-                 bsPopover(id = "q14", title = "",
+                 bsPopover(id = "q15", title = "",
                            
                            content = paste("Please compress your genome fasta file and upload the",
                                            ".gz compression file only. Info on this format", 
@@ -392,8 +405,8 @@ https://www.ncbi.nlm.nih.gov/genome/167?genome_assembly_id=161521 .As an alterna
         div(
           div(style="width:90%; display:inline-block; vertical-align: middle;", fileInput("gff_file", label = HTML('<p> Upload Structure Annotation File (gff, gff3 or gtf format in .gz compression)<span style="color: red; font-size:150%;">*</span></p>'),
                                                                                           accept = ".gz")),
-          div(style="display:inline-block;vertical-align:top;", bsButton("q15", label = "", icon = icon("info"), style = "info", size = "extra-small"))),
-          bsPopover(id = "q15", title = "",
+          div(style="display:inline-block;vertical-align:top;", bsButton("q16", label = "", icon = icon("info"), style = "info", size = "extra-small"))),
+          bsPopover(id = "q16", title = "",
                   
                   content = paste("Please compress your genome annotation file and upload the",
                                   ".gz compression file only.",
@@ -404,8 +417,8 @@ https://www.ncbi.nlm.nih.gov/genome/167?genome_assembly_id=161521 .As an alterna
         div(
           div(style="width:90%; display:inline-block; vertical-align: middle;", fileInput("transcripts_file", "Upload Transcripts Fasta File (.gz compression format)",
                                                                                           accept = ".gz")),
-          div(style="display:inline-block;vertical-align:top;", bsButton("q16", label = "", icon = icon("info"), style = "info", size = "extra-small"))),
-          bsPopover(id = "q16", title = "",
+          div(style="display:inline-block;vertical-align:top;", bsButton("q17", label = "", icon = icon("info"), style = "info", size = "extra-small"))),
+          bsPopover(id = "q17", title = "",
                   
                   content = paste("This field is required to calculate annotation BUSCO scores.",
                                   "Currently the app is configured to use the information from transcripts",
