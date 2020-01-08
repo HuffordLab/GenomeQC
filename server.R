@@ -54,7 +54,19 @@ server <- function(input, output,session) {
     return (destination_directory)
     
   })
-  
+      input_fasta_file3 <- eventReactive(input$go1,{
+    ext <- file_ext(input$fasta_file3$datapath)
+    if (ext == 'gz')
+    {input_f <- gunzip(input$fasta_file3$datapath)[1]}
+    else
+    {input_f <- unzip(input$fasta_file3$datapath)}
+    u_num <- ran_number1()
+    file_f <- paste0("file_fasta3", u_num, "second") # rename of uploaded assembly file in the genome assembly tab
+    destination_directory <- paste0("/opt/shiny-server/samples/sample-apps/assembly_statistics/uploaded_files/",file_f)
+    file.copy(input_f, destination_directory)  # copy the renamed uploaded file to a directory in the shiny server folder
+    return (destination_directory)
+
+  })
   input_fasta_file2 <- eventReactive(input$go2,{
     ext <- file_ext(input$fasta_file2$datapath)
     if (ext == 'gz')
