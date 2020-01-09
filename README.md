@@ -7,6 +7,9 @@ reference genomes of their choice. It is optimized for small and medium
 sized genomes (&lt;2.5 Gb) and has pre-computed results for
 several maize genomes.
 
+**There is a Dockerfile available (with the associated scripts) to run the pipeline without installing any dependencies.**
+
+
 **Installation**
 
 **Bioinformatics software dependencies**
@@ -92,7 +95,6 @@ Three modes are available:
  genome annotations as well as benchmark their analysis with the
  pre-computed reference annotations.
  
-**There is a Dockerfile available (with the associated scripts) to run the pipeline without installing any dependencies.**
 
 **See also an online version of the manual for more details:**
 GenomeQC\_userguide.pdf
