@@ -25,7 +25,7 @@ For genome annotation quality assessment:
 
 ``` mkdir ~/my-scratch-dir (This will create a scratch directory where you need to put all your input files.) ```
 
-``` docker build --no-cache -t annotationqc ```
+``` docker build --no-cache -t annotationqc . ```
 
 ``` docker run -v ~/my-scratch-dir:/working-dir -w /working-dir annotationqc <genome annotation file (gff3 or gff format)> <annotation metrics output file name> <transcript file (FASTA format)>  <BUSCO output directory name> <BUSCO dataset name>   <Number of threads> ```
 
