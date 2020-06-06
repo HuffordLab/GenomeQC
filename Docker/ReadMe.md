@@ -9,7 +9,7 @@ For genome assembly quality assessment:
 
     ``` mkdir ~/my-scratch-dir (This will create a scratch directory where you need to put all your input files.) ```
 
-      ``` docker build --no-cache -t assemblyqc ```
+      ``` docker build --no-cache -t assemblyqc .```
 
      ```  docker run -v  ~/my-scratch-dir:/working-dir -w /working-dir assemblyqc <genome assembly file (fasta format)> <NG output file name> <estimated genome size (in Mb)> <assembly metrics output file name> <contamination check output file name>  <email id> <BUSCO dataset name>  <BUSCO output directory name>  <AUGUSTUS species>  <Number of threads> ```
 
