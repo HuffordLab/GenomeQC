@@ -1,6 +1,9 @@
 FROM ubuntu
 RUN apt-get update --fix-missing
-
+#for adding the time zone data 
+ARG DEBIAN_FRONTEND=noninteractive
+ENV TZ=America/Chicago
+RUN apt-get install -y tzdata
 RUN apt-get install -y build-essential wget git autoconf cmake libjsoncpp-dev
 RUN apt-get install -y python3
 RUN apt-get install -y python3-pip
