@@ -1,3 +1,10 @@
+**How to cite GenomeQC**
+
+GenomeQC: A quality assessment tool for genome assemblies and gene structure annotations
+Nancy Manchanda, John L. Portwood II, Margaret R. Woodhouse, Arun S. Seetharam, Carolyn J. Lawrence-Dill, Carson M. Andorf, Matthew B. Hufford
+
+https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-020-6568-2
+
 # GenomeQC: Genome Assembly and Annotation Metrics
 
 GenomeQC generates descriptive summaries with intuitive graphics for
@@ -103,12 +110,6 @@ GenomeQC\_userguide.pdf
 
 GNU GPL V3.
 
-**How to cite GenomeQC**
-
-GenomeQC: A quality assessment tool for genome assemblies and gene structure annotations
-Nancy Manchanda, John L. Portwood II, Margaret R. Woodhouse, Arun S. Seetharam, Carolyn J. Lawrence-Dill, Carson M. Andorf, Matthew B. Hufford
-
-bioRxiv 795237; doi: https://doi.org/10.1101/795237
 
 **Acknowledgements**
 
