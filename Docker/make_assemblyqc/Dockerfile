@@ -92,9 +92,9 @@ WORKDIR /opt/augustus/augustus-3.3.1/
 RUN make
 RUN make install
 RUN apt-get install -y ncbi-blast+
-RUN wget http://eddylab.org/software/hmmer/hmmer.tar.gz
-RUN tar zxf hmmer.tar.gz
-WORKDIR hmmer-3.3
+RUN wget http://eddylab.org/software/hmmer/hmmer-3.3.1.tar.gz
+RUN tar zxf hmmer-3.3.1.tar.gz
+WORKDIR hmmer-3.3.1
 RUN ./configure --prefix /opt/hmmer
 RUN make
 RUN make install
